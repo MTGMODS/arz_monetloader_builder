@@ -38,23 +38,9 @@ public class MtgTools {
             SharedPreferences prefs = context.getSharedPreferences("mtg", Context.MODE_PRIVATE);
             id = prefs.getString("device_id", null);
             if (id == null) {
-                id = UUID.randomUUID().toString();
+                id = "GEN" + UUID.randomUUID().toString();
                 prefs.edit().putString("device_id", id).apply();
             }
-
-        }
-        String folderName = "monetloader";
-        File[] mediaDirs = context.getExternalMediaDirs();
-        File outputFolder = new File(mediaDirs.length > 0 ? mediaDirs[0] : null, folderName);
-        File file = new File(outputFolder, "compat/.id");
-        try {
-            file.getParentFile().mkdirs();
-            java.io.FileOutputStream io = new java.io.FileOutputStream(file);
-            io.write(id.getBytes(java.nio.charset.StandardCharsets.UTF_8));
-            io.flush();
-            io.close();
-        } catch (Exception e) {
-            e.printStackTrace();
         }
         return id;
     }
