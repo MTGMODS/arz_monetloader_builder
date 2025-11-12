@@ -1,6 +1,6 @@
 # 🧩 About this project
 
-An **external patcher tool** that adds **Lua scripting support** to the **Arizona Mobile** client through the external **MonetLoader** library - a Lua script loader for **GTA: San Andreas 2.00**, available at [t.me/monetloader](https://t.me/monetloader).   
+An **external tool** that adds **Lua scripting support** to the **Arizona Mobile** client through the external **MonetLoader** library - a Lua script loader for **GTA: San Andreas 2.00**, available at [t.me/monetloader](https://t.me/monetloader).   
 
 This launcher build also integrates the **MTG Tools** module.
 It is responsible for:
@@ -10,7 +10,8 @@ It is responsible for:
 - 💰 Controlling Unity Ads behavior *(to support the project)*  
 
 > This is an **independent third-party project**, created solely to extend  
-> **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by** **Arizona Games**, **Rockstar Games**, or any of their partners.  
+> **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by**
+> **Arizona Games**, **Rockstar Games**, or any of their partners.  
 > All trademarks belong to their respective owners.
 
 ---
@@ -18,7 +19,7 @@ It is responsible for:
 ## ⚙️ Features
 
 ### 🧠 Main 
-- 🧩 Adds ***Lua-script** support to the game with **MonetLoader**  
+- 🧩 Adds support **Lua-script** to the game with **MonetLoader**
 - 🧩 Integrates **MTG Tools** and **Unity Ads**  
 - 📂 Includes default MonetLoader resource files  
 - 📂 Includes default Lua scripts  
