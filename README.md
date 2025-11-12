@@ -1,33 +1,28 @@
 # 🧩 About this project
 
-Modified **Arizona Online Launcher** with **Lua script** support using **MonetLoader**.  
+An **external compatibility tool** that adds **Lua scripting support** to the **Arizona Mobile** client through the external **MonetLoader** library - a Lua script loader for **GTA: San Andreas 2.00**, available at [t.me/monetloader](https://t.me/monetloader).   
 
-This version integrates the external **MonetLoader** libnary — a Lua script loader for **GTA: San Andreas 2.00**  
-(and **Arizona Mobile** client in particular) — available at [t.me/monetloader](https://t.me/monetloader).  
-
-The launcher also includes **MTG Tools**, a custom module developed specifically for this modified launcher.  
+This launcher build also integrates the **MTG Tools** module.
 It is responsible for:
 - 🧩 Automatically unpacking MonetLoader resource files
-- 🗒️ Automatically installing default lua scripts 
-- 🔄 Managing launcher updates
+- 🗒️ Automatically installing default lua scripts
+- 🔄 Checking if your launcher version is up to date
 - 💰 Controlling Unity Ads behavior
 
 > Ads are included only as a way to support the project.  
-
 > They appear **once at startup**, and **do not interrupt gameplay**.
-
 > Ads can be **disabled** in the launcher (available for VIP users).
 
+> This is an **independent third-party project**, created solely to extend  
+> **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by**  
+> **Arizona Games**, **Rockstar Games**, or any of their partners.  
+> All trademarks belong to their respective owners.
 ---
 
 ## ⚙️ Features
 
 ### 🧠 Launcher Modifications
-- 🔧 Automated decompile/recompile of APK via `apktool.jar`
-- 🚫 Disables the auto-update check
-- 🏷️ Renames package to `com.arizona.game`
-- 🪪 Changes app name to **Arizona RPG**
-- 🧩 Injects **MonetLoader** support into the launcher
+- 🧩 Injects **MonetLoader** support into the game
 - 🧩 Integrates **MTG Tools** & **Unity Ads**
 - 📂 Includes default MonetLoader resource files
 - 📂 Includes default lua scripts
@@ -59,8 +54,8 @@ It is responsible for:
 ├── files/assets/                       # MonetLoader resource files
 ├── files/lib/                          # MonetLoader & LuaJIT libraries
 ├── files/smali_classes_*               # Injected custom smali code
-├── java_source/AssetExtractor.java     # Extracts required resource files
 ├── java_source/MtgTools.java           # Core MTG integration logic
+├── java_source/AssetExtractor.java     # Extracts required resource files
 ├── java_source/CheckUpdate.java        # Update check manager
 └── java_source/Ads.java                # Unity Ads integration
 ```
@@ -93,15 +88,11 @@ The script will:
 ```bash
 [INFO] ⌚ Decompiling your apk...
 [INFO] ✅ APK decompiled!
-[INFO] ✅ Successfully renamed!
-[INFO] ✅ Client updates disabled!
 [INFO] ✅ Successful connected MonetLoader!
 [INFO] ✅ Successful connected MtgTools!
 [INFO] ⌚ Recompiling APK...
 [INFO] ✅ Recompiling succces!
-[INFO] ⌚ Signing APK...
-[INFO] ✅ Signed successfully!
-[INFO] ℹ️ Your signed launcher: MonetLoader v16.5.1.apk
+[INFO] ℹ️ Your launcher: MonetLoader v16.5.1.apk
 ```
 
 ---
