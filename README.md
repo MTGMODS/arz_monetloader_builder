@@ -10,8 +10,7 @@ It is responsible for:
 - 💰 Controlling Unity Ads behavior *(to support the project)*  
 
 > This is an **independent third-party project**, created solely to extend  
-> **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by**  
-> **Arizona Games**, **Rockstar Games**, or any of their partners.  
+> **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by** **Arizona Games**, **Rockstar Games**, or any of their partners.  
 > All trademarks belong to their respective owners.
 
 ---
@@ -19,7 +18,7 @@ It is responsible for:
 ## ⚙️ Features
 
 ### 🧠 Main 
-- 🧩 Adds **MonetLoader** Lua-script support to the game  
+- 🧩 Adds ***Lua-script** support to the game with **MonetLoader**  
 - 🧩 Integrates **MTG Tools** and **Unity Ads**  
 - 📂 Includes default MonetLoader resource files  
 - 📂 Includes default Lua scripts  
@@ -72,12 +71,6 @@ KEY_PASS = "password"   # your key pass
 ```bash
 python build_launcher.py
 ```
-The script will:
-- 📥 Download or use the local Arizona launcher APK
-- 🧩 Decompile it using apktool
-- 🚫 Disable auto-updates in the client
-- 🔗 Inject MonetLoader, MTG Tools, and Unity Ads
-- 🏗️ Recompile and sign the final APK
 
 ### 🧪 Example build logs
 ```bash
