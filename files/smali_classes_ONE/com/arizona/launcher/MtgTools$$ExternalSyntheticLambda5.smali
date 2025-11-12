@@ -3,7 +3,7 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
+.implements Landroid/content/DialogInterface$OnClickListener;
 
 
 # instance fields
@@ -28,7 +28,7 @@
 
 
 # virtual methods
-.method public final run()V
+.method public final onClick(Landroid/content/DialogInterface;I)V
     .locals 2
 
     .line 0
@@ -36,7 +36,7 @@
 
     iget-object v1, p0, Lcom/arizona/launcher/MtgTools$$ExternalSyntheticLambda5;->f$1:Landroid/content/Context;
 
-    invoke-static {v0, v1}, Lcom/arizona/launcher/MtgTools;->lambda$initialize$13(Landroid/app/Activity;Landroid/content/Context;)V
+    invoke-static {v0, v1, p1, p2}, Lcom/arizona/launcher/MtgTools;->lambda$initialize$12(Landroid/app/Activity;Landroid/content/Context;Landroid/content/DialogInterface;I)V
 
     return-void
 .end method

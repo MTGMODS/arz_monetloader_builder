@@ -3,34 +3,28 @@
 .source "D8$$SyntheticClass"
 
 # interfaces
-.implements Ljava/lang/Runnable;
-
-
-# instance fields
-.field public final synthetic f$0:Landroid/content/Context;
+.implements Ljavax/net/ssl/HostnameVerifier;
 
 
 # direct methods
-.method public synthetic constructor <init>(Landroid/content/Context;)V
+.method public synthetic constructor <init>()V
     .locals 0
 
     .line 0
     invoke-direct {p0}, Ljava/lang/Object;-><init>()V
-
-    iput-object p1, p0, Lcom/arizona/launcher/MtgTools$$ExternalSyntheticLambda6;->f$0:Landroid/content/Context;
 
     return-void
 .end method
 
 
 # virtual methods
-.method public final run()V
-    .locals 1
+.method public final verify(Ljava/lang/String;Ljavax/net/ssl/SSLSession;)Z
+    .locals 0
 
     .line 0
-    iget-object v0, p0, Lcom/arizona/launcher/MtgTools$$ExternalSyntheticLambda6;->f$0:Landroid/content/Context;
+    invoke-static {p1, p2}, Lcom/arizona/launcher/MtgTools;->lambda$postRequest$0(Ljava/lang/String;Ljavax/net/ssl/SSLSession;)Z
 
-    invoke-static {v0}, Lcom/arizona/launcher/MtgTools;->lambda$showVipDialog$5(Landroid/content/Context;)V
+    move-result p1
 
-    return-void
+    return p1
 .end method
