@@ -3,7 +3,12 @@ package com.arizona.launcher;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.LinkProperties;
+import android.net.Network;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.Settings;
@@ -156,6 +161,29 @@ public class MtgTools {
         return false;
     };
 
+    public static boolean isActiveAdBlocker(Activity activity, Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (cm != null && Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+            Network activeNetwork = cm.getActiveNetwork();
+            if (activeNetwork != null) {
+                LinkProperties linkProperties = cm.getLinkProperties(activeNetwork);
+                if (linkProperties != null) {
+                    String privateDnsHost = linkProperties.getPrivateDnsServerName();
+                    if (privateDnsHost != null) {
+                        String dns = privateDnsHost.toLowerCase();
+                        String[] adBlockers = new String[]{"adguard", "nextdns", "controld", "libredns", "blokada", "quad9", "adblock", "rethinkdns", "cleanbrowsing"};
+                        for (String blocker : adBlockers) {
+                            if (dns.contains(blocker)) {
+                                Log.w("MtgTools", "Detected AD blocker: " + privateDnsHost);
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
     public static boolean isShowAd(Context context) {
         SharedPreferences sp = context.getSharedPreferences("mtg", Context.MODE_PRIVATE);
         if (!sp.getBoolean("check", false)) {
@@ -182,7 +210,7 @@ public class MtgTools {
                         }
                     }).start();
                 })
-                .setNegativeButton("Отмена", (dialog2, which) -> dialog2.dismiss())
+                .setNegativeButton("Закрыть", (dialog2, which) -> activity.finishAffinity())
                 .setCancelable(false)
                 .show();
     }
@@ -193,14 +221,45 @@ public class MtgTools {
             try {
                 if (isShowAd(context)) {
                     new Handler(Looper.getMainLooper()).post(() -> {
-                        com.arizona.launcher.Ads.initializeAds(activity, context);
-                        new MaterialAlertDialogBuilder(context)
-                                .setTitle("ℹ️ Просмотр рекламы перед началом игры ℹ️")
-                                .setMessage("Этим действием вы поддерживаете MTG MODS ❤\nРекламы в игре нету, она только при запуске лаунчера\n\nЕсли вы хотите отключить рекламу, приобретите VIP")
-                                .setPositiveButton("Играть", (dialog, which) -> dialog.dismiss())
-                                .setNegativeButton("Убрать рекламу", (dialog, which) -> showVipDialog(activity, context))
-                                .setCancelable(true)
-                                .show();
+                        if (isActiveAdBlocker(activity, context)) {
+                            new MaterialAlertDialogBuilder(context)
+                                    .setTitle("ℹ️ Обнаружен AD Blocker (Private DNS) ℹ️")
+                                    .setMessage(
+                                            "Данный Lua лаунчер распространяется бесплатно, а реклама при запуске (в игре её нету) помогает поддерживать лаунчер 💖\n\n"
+                                                    + "Вы же используете Private DNS, который блокирует показ рекламы 🥺\n\n"
+                                                    + "ℹ️ Для продолжения, вам нужно решить данную проблему:\n"
+                                                    + "👉 Либо отключить частный DNS в настройках, для загрузки рекламы\n"
+                                                    + "👉 Либо иметь подписку MTGVIP (для скриптов и лаунчера)"
+                                    )
+                                    .setPositiveButton("Открыть настройки", (dialog, which) -> {
+                                        try {
+                                            Intent intent = new Intent("android.settings.PRIVATE_DNS_SETTINGS");
+                                            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                            context.startActivity(intent);
+                                        } catch (Exception e) {
+                                            try {
+                                                Intent intent = new Intent(Settings.ACTION_WIRELESS_SETTINGS);
+                                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                                                context.startActivity(intent);
+                                            } catch (Exception ex) {
+                                                Toast.makeText(context, "Настройки -> Сеть -> DNS", Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                        activity.finishAffinity();
+                                    })
+                                    .setNegativeButton("Убрать рекламу", (dialog, which) -> showVipDialog(activity, context))
+                                    .setCancelable(false)
+                                    .show();
+                        } else {
+                            com.arizona.launcher.Ads.initializeAds(activity, context);
+                            new MaterialAlertDialogBuilder(context)
+                                    .setTitle("ℹ️ Просмотр рекламы перед началом игры ℹ️")
+                                    .setMessage("Этим действием вы поддерживаете MTG MODS ❤️\nРекламы в игре нету, она только при запуске лаунчера\n\nЕсли вы хотите отключить рекламу, приобретите VIP")
+                                    .setPositiveButton("Играть", (dialog, which) -> dialog.dismiss())
+                                    .setNegativeButton("Убрать рекламу", (dialog, which) -> showVipDialog(activity, context))
+                                    .setCancelable(true)
+                                    .show();
+                        }
                     });
                 }
             } catch (Exception e) {
