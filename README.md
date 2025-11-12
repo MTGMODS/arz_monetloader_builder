@@ -1,46 +1,41 @@
 # 🧩 About this project
 
-An **external compatibility tool** that adds **Lua scripting support** to the **Arizona Mobile** client through the external **MonetLoader** library - a Lua script loader for **GTA: San Andreas 2.00**, available at [t.me/monetloader](https://t.me/monetloader).   
+An **external patcher tool** that adds **Lua scripting support** to the **Arizona Mobile** client through the external **MonetLoader** library - a Lua script loader for **GTA: San Andreas 2.00**, available at [t.me/monetloader](https://t.me/monetloader).   
 
 This launcher build also integrates the **MTG Tools** module.
 It is responsible for:
 - 🧩 Automatically unpacking MonetLoader resource files
 - 🗒️ Automatically installing default lua scripts
 - 🔄 Checking if your launcher version is up to date
-- 💰 Controlling Unity Ads behavior
-
-> Ads are included only as a way to support the project.  
-> They appear **once at startup**, and **do not interrupt gameplay**.
-> Ads can be **disabled** in the launcher (available for VIP users).
+- 💰 Controlling Unity Ads behavior *(to support the project)*  
 
 > This is an **independent third-party project**, created solely to extend  
 > **Lua compatibility for Arizona Mobile**, and is **not affiliated with or endorsed by**  
 > **Arizona Games**, **Rockstar Games**, or any of their partners.  
 > All trademarks belong to their respective owners.
+
 ---
 
 ## ⚙️ Features
 
-### 🧠 Launcher Modifications
-- 🧩 Injects **MonetLoader** support into the game
-- 🧩 Integrates **MTG Tools** & **Unity Ads**
-- 📂 Includes default MonetLoader resource files
-- 📂 Includes default lua scripts
+### 🧠 Main 
+- 🧩 Adds **MonetLoader** Lua-script support to the game  
+- 🧩 Integrates **MTG Tools** and **Unity Ads**  
+- 📂 Includes default MonetLoader resource files  
+- 📂 Includes default Lua scripts  
 
 ### ⚙️ MonetLoader Integration
-- Supports Lua-based scripts (x32 only)
+- Provides Lua-based scripting support *(x32 only)*
 
 ### 🧰 MTG Tools
-- Injects `MtgTools.initialize(Activity, Context)` into the main launcher entry
-- Automatically installs MonetLoader resource files (Lua libraries, default helper scripts, and related assets)
-- Displays custom toast with the build version
-- Checks for updates of the modified MonetLoader launcher
-- Provides hooks for **MTG MODS VIP** system
+- Installs MonetLoader resource files (Lua libraries, helper scripts, and related assets)  
+- Checks for updates of the MonetLoader-based client  
+- Manages included MTG modules  
 
 ### 💰 Unity Ads
-- Loads and displays ads using the Unity SDK
-- Integrated via `Ads.java`
-- Logs ad events (loaded, failed, closed, etc.)
+- Loads and displays ads using the Unity SDK  
+- Ads appear **once at startup** and **do not interrupt gameplay**  
+- They can be **disabled** inside the launcher *(for VIP users)*  
 
 ---
 
@@ -86,12 +81,8 @@ The script will:
 
 ### 🧪 Example build logs
 ```bash
-[INFO] ⌚ Decompiling your apk...
-[INFO] ✅ APK decompiled!
 [INFO] ✅ Successful connected MonetLoader!
 [INFO] ✅ Successful connected MtgTools!
-[INFO] ⌚ Recompiling APK...
-[INFO] ✅ Recompiling succces!
 [INFO] ℹ️ Your launcher: MonetLoader v16.5.1.apk
 ```
 
