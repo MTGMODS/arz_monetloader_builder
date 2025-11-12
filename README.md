@@ -1,6 +1,4 @@
-# 🎮 Arizona Online Launcher — MonetLoader Edition
-
-## 🧩 About this project
+# 🧩 About this project
 
 Modified **Arizona Online Launcher** with **Lua script** support using **MonetLoader**.  
 
