@@ -1,0 +1,11 @@
+{
+    "gtasa_name": "libGTASA.so",
+    "profile_name": "Arizona v16.7.2 by t.me/osp_x && t.me/idmkdev",
+    "compat_scripts": [],
+    "samp_name": "libsamp.so",
+    "receiveignorerpc_pattern": "F0B503AF2DE9000F85B081460068C16A",
+    "cnetgame_ctor_pattern": "F0B503AF2DE9000F8BB0C0EF5000",
+    "rakclientinterface_netgame_offset": 528,
+    "use_samp_touch_workaround": true,
+    "nveventinsertnewest_offset": 2606320
+}
