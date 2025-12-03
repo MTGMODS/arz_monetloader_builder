@@ -1,5 +1,5 @@
 script_name('Arizona Music Fix')
-script_version('1.3')
+script_version('1.4')
 script_version_number(1)
 script_author('Radare')
 script_properties('work-in-pause', 'forced-reloading-only')
@@ -18,12 +18,14 @@ bass.BASS_Init(-1, 44100, BASS_DEVICE_3D, nil, nil)
 
 local ASInfo = {}
 local cacheDir = getWorkingDirectory().."/cachemusic/"
+local MAIN_SOUNDS_CDN = "https://cdn.azsounds.cloud"
 
 local ini = inicfg.load({
     music = {
         working = true,
         fromfile = true,
         savefile = false,
+        reserve = false,
         global = 100.0,
         vehicle = 100.0,
         position = 100.0
@@ -34,7 +36,7 @@ function save() inicfg.save(ini, "ArizonaMusicFix.ini") end
 local sizeX, sizeY = getScreenResolution()
 local new, str, sizeof = imgui.new, ffi.string, ffi.sizeof
 local renderWindow = new.bool()
-local volworking, volfile, volsave, volglobal, volvehicle, volposition = new.bool(ini.music.working), new.bool(ini.music.fromfile), new.bool(ini.music.savefile), new.float(ini.music.global), new.float(ini.music.vehicle), new.float(ini.music.position)
+local volworking, volfile, volsave, volreserve, volglobal, volvehicle, volposition = new.bool(ini.music.working), new.bool(ini.music.fromfile), new.bool(ini.music.savefile), new.bool(ini.music.reserve), new.float(ini.music.global), new.float(ini.music.vehicle), new.float(ini.music.position)
 local encoding = require 'encoding'
 encoding.default = 'CP1251'
 local u8 = encoding.UTF8
@@ -42,20 +44,20 @@ local u8 = encoding.UTF8
 imgui.OnFrame(function() return renderWindow[0] end,
   function(player)
     imgui.SetNextWindowPos(imgui.ImVec2(sizeX / 2,  sizeY / 2), imgui.Cond.FirstUseEver, imgui.ImVec2(0.5, 0.5))
-    imgui.SetNextWindowSize(imgui.ImVec2(sizeX / 2, 200), imgui.Cond.Always)
+    imgui.SetNextWindowSize(imgui.ImVec2(sizeX / 2, 230), imgui.Cond.Always)
     imgui.Begin(thisScript().name .. " " .. thisScript().version, renderWindow, imgui.WindowFlags.NoResize)
     
     if imgui.Checkbox(u8'Работа музыки', volworking) then     
         ini.music.working = volworking[0]
         save()
         if not ini.music.working then
-           for streamid, info in pairs(ASInfo) do
+            for streamid, info in pairs(ASInfo) do
 			    if info.handle and bass.BASS_ChannelIsActive(info.handle) ~= 0 then deleteAudio(info.handle) info.handle = nil end
 			end
         else
-           for streamid, info in pairs(ASInfo) do
-			    if info.url and info.state and string.len(info.url) > 0 and string.find(info.url, "http") then
-			         loadAudioStream(ASInfo[streamid].url, streamid)
+            for streamid, info in pairs(ASInfo) do
+			    if info.url and info.state and string.len(info.url) > 0 then
+			        loadAudioStream(ASInfo[streamid].url, streamid)
 			    end
 			end
         end
@@ -72,20 +74,49 @@ imgui.OnFrame(function() return renderWindow[0] end,
 	        save()
 	    end
     end
+    imgui.SameLine()
+    if imgui.Checkbox(u8'Использовать резерв', volreserve) then     
+        ini.music.reserve = volreserve[0]
+        if ini.music.reserve then MAIN_SOUNDS_CDN = "https://reserve-cdn.azsounds.cloud"
+        else MAIN_SOUNDS_CDN = "https://cdn.azsounds.cloud" end
+        save()
+    end
     if imgui.SliderFloat(u8'Громкость звука', volglobal, 0.0, 100.0) then
         ini.music.global = volglobal[0]
         save()
-   end
+    end
     if imgui.SliderFloat(u8'Громокость машин', volvehicle, 0.0, 100.0) then
         ini.music.vehicle = volvehicle[0]
         save()
-   end
+    end
     if imgui.SliderFloat(u8'Громкость бумбоксов', volposition, 0.0, 100.0) then
         ini.music.position = volposition[0]
         save()
-   end
-   imgui.End()
+    end
+    imgui.Text("CDN = ")
+    imgui.SameLine()
+    imgui.Link(MAIN_SOUNDS_CDN)
+    imgui.SameLine()
+    imgui.Text(" | Version: "..thisScript().version.." | ")
+    imgui.SameLine()
+    imgui.Link("https://t.me/ryderinc")
+    imgui.End()
 end)
+
+local gta = ffi.load('GTASA')
+ffi.cdef[[void _Z12AND_OpenLinkPKc(const char* link);]]
+function openLink(link) gta._Z12AND_OpenLinkPKc(link) end
+function imgui.Link(link, text)
+    text = text or link
+    local tSize = imgui.CalcTextSize(text)
+    local p = imgui.GetCursorScreenPos()
+    local DL = imgui.GetWindowDrawList()
+    local col = { 0xFFFF7700, 0xFFFF9900 }
+    if imgui.InvisibleButton("##" .. link, tSize) then openLink(link) end
+    local color = imgui.IsItemHovered() and col[1] or col[2]
+    DL:AddText(p, color, text)
+    DL:AddLine(imgui.ImVec2(p.x, p.y + tSize.y), imgui.ImVec2(p.x + tSize.x, p.y + tSize.y), color)
+end
 
 function getVolumeConfig(type)
     if type == 2 then return ini.music.global/100
@@ -97,7 +128,10 @@ end
 function main()
     if not doesDirectoryExist(cacheDir) then createDirectory(cacheDir)
     else deleteFiles(cacheDir) end
+    if ini.music.reserve then MAIN_SOUNDS_CDN = "https://reserve-cdn.azsounds.cloud"
+    else MAIN_SOUNDS_CDN = "https://cdn.azsounds.cloud" end
     sampRegisterChatCommand("music", function() renderWindow[0] = not renderWindow[0] end)
+    sampRegisterChatCommand("msdebug", function() debugging = not debugging end)
     lua_thread.create(tickStreams)
     print("Arizona Music Fix on MonetLoader loaded by t.me/ryderinc")
     addEventHandler('onReceiveRpc', function(id, bs, ...)
@@ -111,13 +145,13 @@ function main()
                 setStreamUrl(bs, nil)
                 return false
             end
-           if packet == 11 then
-                 deleteStream(bs)
-                 return false
+            if packet == 11 then
+                deleteStream(bs)
+                return false
             end
-           if packet == 13 then
-                 stopStream(bs)
-                 return false
+            if packet == 13 then
+                stopStream(bs)
+                return false
             end
         end
     end) 
@@ -181,8 +215,8 @@ function setStreamUrl(bs, streamid)
 	    
 	    ASInfo[streamid].url = url
 	    ASInfo[streamid].state = state
-	    if state and string.len(url) > 0 and string.find(url, "http") and ini.music.working then 
-	          loadAudioStream(url, streamid)
+	    if state and string.len(url) > 0 and ini.music.working then 
+	       loadAudioStream(url, streamid)
 	    end
 	
 	   debugMessage("setStreamUrl: streamid: "..streamid.." | playtime: "..ASInfo[streamid].time.." | url: "..url.." ("..string.len(url)..")")
@@ -258,23 +292,31 @@ function loadAudio(url)
     return handle
 end
 
+function prepareUrl(url)
+    if not string.find(url, "http") then
+        url = MAIN_SOUNDS_CDN .. url
+    end
+    return url
+end
 
 function loadAudioStream(url, streamid)
+    local origUrl = url
+    url = prepareUrl(url)
     if not ini.music.fromfile then
-	     ASInfo[streamid].handle = loadAudio(url)  
-         playAudio(ASInfo[streamid].handle)
-         attachStream(ASInfo[streamid].handle, ASInfo[streamid].type, ASInfo[streamid].target)
-         if ASInfo[streamid].time > 0 then setAudioTime(ASInfo[streamid].handle, ASInfo[streamid].time) end
+	    ASInfo[streamid].handle = loadAudio(url)  
+        playAudio(ASInfo[streamid].handle)
+        attachStream(ASInfo[streamid].handle, ASInfo[streamid].type, ASInfo[streamid].target)
+        if ASInfo[streamid].time > 0 then setAudioTime(ASInfo[streamid].handle, ASInfo[streamid].time) end
     else
 	    local path = cacheDir..md5.sumhexa(url)..".mp3"
 	    debugMessage("loadAudioStream: url: "..url)
 	    if not doesFileExist(path) then 
 		    downloadToFile(url, path, function(type, pos, total_size)
-		        if ASInfo[streamid].url ~= url or not ASInfo[streamid].state then return os.remove(path) end
+		        if ASInfo[streamid].url ~= origUrl or not ASInfo[streamid].state then return os.remove(path) end
 			    if type == "finished" then
 			        if ASInfo[streamid] and ASInfo[streamid].handle and bass.BASS_ChannelIsActive(ASInfo[streamid].handle) ~= 0 then deleteAudio(ASInfo[streamid].handle) end
 			        ASInfo[streamid].handle = bass.BASS_StreamCreateFile(false, path, 0, 0, bit.bor(BASS_SAMPLE_MONO, BASS_SAMPLE_3D))
-		 	       bassError("BASS_StreamCreateFile")
+		 	        bassError("BASS_StreamCreateFile")
 			        playAudio(ASInfo[streamid].handle)
 			        attachStream(ASInfo[streamid].handle, ASInfo[streamid].type, ASInfo[streamid].target)
 		            if ASInfo[streamid].time > 0 then setAudioTime(ASInfo[streamid].handle, ASInfo[streamid].time) end
@@ -286,7 +328,7 @@ function loadAudioStream(url, streamid)
 		else
 		    if ASInfo[streamid] and ASInfo[streamid].handle and bass.BASS_ChannelIsActive(ASInfo[streamid].handle) ~= 0 then deleteAudio(ASInfo[streamid].handle) end
 	        ASInfo[streamid].handle = bass.BASS_StreamCreateFile(false, path, 0, 0, bit.bor(BASS_SAMPLE_MONO, BASS_SAMPLE_3D))
-	 	   bassError("BASS_StreamCreateFile")
+	 	    bassError("BASS_StreamCreateFile")
 	        playAudio(ASInfo[streamid].handle)
 	        attachStream(ASInfo[streamid].handle, ASInfo[streamid].type, ASInfo[streamid].target)
 	        if ASInfo[streamid].time > 0 then setAudioTime(ASInfo[streamid].handle, ASInfo[streamid].time) end
