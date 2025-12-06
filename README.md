@@ -73,6 +73,9 @@ KEY_PASS = "password"   # your key pass
 python build_launcher.py
 ```
 
+### ⚙️ Update profile.json for MonetLoader
+- https://www.youtube.com/watch?v=u6gdRxX3lSc
+
 ### 🧪 Example build logs
 ```bash
 [INFO] ✅ Successful connected MonetLoader!
