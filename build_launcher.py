@@ -107,7 +107,9 @@ with open(GTASA_INTERNAL_PATH, "r", encoding="utf-8") as file:
 check_connect = False
 
 for i, line in enumerate(smali_lines):
-    match1 = re.search(r'const-string (v\d+), "samp"', line)
+    # match1 = re.search(r'const-string (v\d+), "samp"', line)
+    match1 = re.search(r'const-string(?:/jumbo)? (v\d+), "samp"', line)
+
     if match1:
         var_name = match1.group(1)
         
