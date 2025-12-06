@@ -68,13 +68,13 @@ It is responsible for:
 KEY_ALIAS = "key0"      # your key
 KEY_PASS = "password"   # your key pass
 ```
-3. Run the build script in terminal:
+3. Update profile.json for actual libsamp
+- https://www.youtube.com/watch?v=u6gdRxX3lSc
+4. Run the build script in terminal:
 ```bash
 python build_launcher.py
 ```
 
-### ⚙️ Update profile.json for MonetLoader
-- https://www.youtube.com/watch?v=u6gdRxX3lSc
 
 ### 🧪 Example build logs
 ```bash
