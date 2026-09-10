@@ -12,9 +12,6 @@ local ffi = require('ffi')
 local effil = require('effil')
 local memory = require('memory')
 
-function isMonetLoader() 
-	return MONET_VERSION ~= nil 
-end
 if MONET_DPI_SCALE == nil then MONET_DPI_SCALE = 1.0 end
 
 local imgui = require('mimgui')
@@ -134,32 +131,18 @@ function downloadToFile(url, path, callback, progressInterval)
 	end)
 end
 function downloadFileFromUrlToPath(url, path)
-	if isMonetLoader() then
-		downloadToFile(url, path, function(type, pos, total_size)
-			if type == "downloading" then
-				--print(("Скачивание %d/%d"):format(pos, total_size))
-			elseif type == "finished" then
-				lua_thread.create(function ()
-					msg('Загрузка скрипта ' .. path:gsub(dir .. '/','') .. ' закончена! Перезапуск скриптов через 3 секунды...')
-					wait(3000)
-					reloadScripts()
-				end)
-			elseif type == "error" then
-				msg('Ошибка загрузки: ' .. pos)
-			end
-		end)
-	else
-		downloadUrlToFile(url, path, function(id, status)
-			if status == 6 then -- ENDDOWNLOADDATA
-				lua_thread.create(function ()
-					msg('Загрузка скрипта ' .. path:gsub(dir .. '/','') .. ' закончена! Перезапуск скриптов через 3 секунды...')
-					MainWindow[0] = false
-					wait(3000)
-					reloadScripts()
-				end)
-			end
-		end)
-	end
+	downloadToFile(url, path, function(type, pos, total_size)
+		if type == "downloading" then
+		elseif type == "finished" then
+			lua_thread.create(function ()
+				msg('Загрузка скрипта ' .. path:gsub(dir .. '/','') .. ' закончена! Перезапуск скриптов через секунду...')
+				wait(1000)
+				reloadScripts()
+			end)
+		elseif type == "error" then
+			msg('Ошибка загрузки: ' .. pos)
+		end
+	end)
 end
 function get_all_scripts()
 	all_scripts = {}
@@ -167,29 +150,17 @@ function get_all_scripts()
 	local path = configDirectory .. "/scripts.json"
 	local url = "https://github.com/MTGMODS/lua_scripts/raw/refs/heads/main/scripts.json"
 	os.remove(path)
-	if isMonetLoader() then
-		downloadToFile(url, path, function(type, pos, total_size)
-			if type == "finished" then
-				local array = readJsonFile(path)
-				if array ~= nil then
-					all_scripts = array
-					sort()
-				end
-			elseif type == "error" then
-				msg('Ошибка загрузки: ' .. pos)
+	downloadToFile(url, path, function(type, pos, total_size)
+		if type == "finished" then
+			local array = readJsonFile(path)
+			if array ~= nil then
+				all_scripts = array
+				sort()
 			end
-		end)
-	else
-		downloadUrlToFile(url, path, function(id, status)
-			if status == 6 then -- ENDDOWNLOADDATA
-				local array = readJsonFile(path)
-				if array ~= nil then
-					all_scripts = array
-					sort()
-				end
-			end
-		end)
-	end
+		elseif type == "error" then
+			msg('Ошибка загрузки: ' .. pos)
+		end
+	end)
 	function readJsonFile(filePath)
 		if not doesFileExist(filePath) then
 			msg("Ошибка: Файл не существует")
@@ -198,7 +169,7 @@ function get_all_scripts()
 		local file = io.open(filePath, "r")
 		local content = file:read("*a")
 		file:close()
-		local cjson = require("cjson") -- или "cjson"
+		local cjson = require("cjson")
 		local status, jsonData = pcall(cjson.decode, content)
 		if not status then
 			msg("Ошибка: Неверный формат JSON: " .. tostring(err))
@@ -218,11 +189,8 @@ end
 
 imgui.OnInitialize(function()
 	imgui.GetIO().IniFilename = nil
-	if isMonetLoader() then
-		fa.Init(14 * MONET_DPI_SCALE)
-	else
-		fa.Init()
-	end
+	fa.Init(14 * MONET_DPI_SCALE)
+
 	imgui.SwitchContext()
     imgui.GetStyle().WindowPadding = imgui.ImVec2(5 * MONET_DPI_SCALE, 5 * MONET_DPI_SCALE)
     imgui.GetStyle().FramePadding = imgui.ImVec2(5 * MONET_DPI_SCALE, 5 * MONET_DPI_SCALE)
