@@ -118,7 +118,7 @@ for i, line in enumerate(smali_lines):
         var_name = match1.group(1)
         
         if f"invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V" in smali_lines[i + 2]:
-            smali_lines.insert(i + 4, f'\n    const-string {var_name}, "NeoMLoader"\n\n    invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n')
+            smali_lines.insert(i + 4, f'\n    const-string {var_name}, "neomloader"\n\n    invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n')
             print("[INFO] ✅ NeoMLoader injected successfully!")
             check_connect = True
             break
