@@ -34,7 +34,8 @@ import javax.net.ssl.X509TrustManager;
 
 public class MtgTools {
 
-    public static boolean forceVip = false;
+    private static boolean forceVip = false;
+    private static boolean isInitialized = false;
 
     @SuppressLint("HardwareIds")
     public static String getDeviceId(Context context) {
@@ -209,7 +210,10 @@ public class MtgTools {
                 .show();
     }
 
-    public static void initialize(Activity activity, Context context) {
+    public static synchronized void initialize(Activity activity, Context context) {
+
+        if (isInitialized) { return; }
+        isInitialized = true;
 
         new Thread(() -> {
             try {
