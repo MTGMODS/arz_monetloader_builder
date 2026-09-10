@@ -22,12 +22,12 @@ public class AssetExtractor {
 
     public static void unpackAssets(Activity activity, Context context) {
 
-        String folderName = "monetloader";
+        String folderName = "neomloader";
         File[] mediaDirs = context.getExternalMediaDirs();
         File outputFolder = new File(mediaDirs.length > 0 ? mediaDirs[0] : null, folderName);
 
         if (outputFolder == null || (!outputFolder.exists() && !outputFolder.mkdirs())) {
-            showErrorDialog(activity, context, "❗ MonetLoader Error ❗", "Не удалось автоматически создать папку /monetloader\n\nПопробуйте перезапустить лаунчер или создайте её вручную.");
+            showErrorDialog(activity, context, "❗ NeoMLoader Error ❗", "Не удалось автоматически создать папку /neomloader\n\nПопробуйте перезапустить лаунчер или создайте её вручную.");
             return;
         }
 
@@ -35,7 +35,7 @@ public class AssetExtractor {
             AssetManager assetManager = context.getAssets();
             String[] files = assetManager.list(folderName);
             if (files == null || files.length == 0) {
-                showErrorDialog(activity, context, "❗ MonetLoader Error ❗", "У вас битый APK без нужных файлов!\n\n" + "Переустановите данный лаунчер из t.me/mtgmods");
+                showErrorDialog(activity, context, "❗ NeoMLoader Error ❗", "У вас битый APK без нужных файлов!\n\n" + "Переустановите данный лаунчер из t.me/mtgmods");
                 return;
             }
 
@@ -53,7 +53,7 @@ public class AssetExtractor {
             Log.e("MtgTools", "Error extractor: " + e);
             File fixFile = new File(outputFolder, "lib/imgui_piemenu.lua");
             if (!fixFile.exists()) {
-                showErrorDialog(activity, context, "❗MonetLoader Error❗", "Не удалось автоматически установить нужные библиотеки для работоспособности!\n\nПопробуйте перезапустить лаунчер или установите их вручную.");
+                showErrorDialog(activity, context, "❗NeoMLoader Error❗", "Не удалось автоматически установить нужные библиотеки для работоспособности!\n\nПопробуйте перезапустить лаунчер или установите их вручную.");
             }
         }
 
