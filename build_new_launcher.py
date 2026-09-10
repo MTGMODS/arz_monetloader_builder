@@ -41,8 +41,6 @@ print("[INFO] ⚙️ Decompiling APK...")
 subprocess.run(["java", "-jar", APKTOOL_PATH, "d", APK_PATH, "-o", DECODED_DIR, "--force"], check=True)
 print("[INFO] ✅ APK decompiled successfully!")
 
-input("Press Enter to continue...")
-
 ##################################################################################################################
 
 LIB_PATH = DECODED_DIR + "/lib/armeabi-v7a"
@@ -87,97 +85,68 @@ except Exception as e:
 
 ##################################################################################################################
 
-print("[INFO] 🔗 Injecting NeoMLoader dependency into libag-client.so...")
-
-PATCHELF_PATH = PATH + "/libs/patchelf.exe"
-
-if not os.path.exists(PATCHELF_PATH):
-    raise RuntimeError(f"❗ patchelf not found: {PATCHELF_PATH}")
-
-LIB_DIR = os.path.join(DECODED_DIR, "lib", "arm64-v8a")
-AG_CLIENT_PATH = os.path.join(LIB_DIR, "libag-client.so")
-NEOMLOADER_PATH = os.path.join(LIB_DIR, "libNeoMLoader.so")
-
-if not os.path.exists(AG_CLIENT_PATH):
-    raise RuntimeError(f"❗ libag-client.so not found: {AG_CLIENT_PATH}")
-
-if not os.path.exists(NEOMLOADER_PATH):
-    raise RuntimeError(f"❗ libNeoMLoader.so not found: {NEOMLOADER_PATH}")
-
-print("[INFO] 🔧 Adding DT_NEEDED: libNeoMLoader.so")
-
-# subprocess.run([PATCHELF_PATH, "--add-needed", "libNeoMLoader.so", AG_CLIENT_PATH], check=True)
-
-subprocess.run([PATCHELF_PATH, "--add-needed", "libpluginloader.so", AG_CLIENT_PATH], check=True)
-
-print("[INFO] ✅ NeoMLoader dependency injected successfully!")
-
-##################################################################################################################
-
 SMALI_CLASSES = glob.glob(DECODED_DIR + "/smali_classes*")
 
-# SMALI_PATH = ""
+SMALI_PATH = ""
 
-# for smali_dir in SMALI_CLASSES:
-#     smali_dir = smali_dir.replace('\\', '/')
-#     potential_path = smali_dir + "/com/arizona/game/GTASAInternal.smali"
-#     if os.path.isfile(potential_path):
-#         SMALI_PATH = smali_dir.replace(DECODED_DIR, '')
-#         break
+for smali_dir in SMALI_CLASSES:
+    smali_dir = smali_dir.replace('\\', '/')
+    potential_path = smali_dir + "/com/arizona/game/GTASA.smali"
+    if os.path.isfile(potential_path):
+        SMALI_PATH = smali_dir.replace(DECODED_DIR, '')
+        break
 
-# if SMALI_PATH == "":
-#     raise RuntimeError("❗ Failed to find GTASA smali folder!")
+if SMALI_PATH == "":
+    raise RuntimeError("❗ Failed to find GTASA smali folder!")
 
 # ##################################################################################################################
 
-# GTASA_INTERNAL_PATH = DECODED_DIR + SMALI_PATH + "/com/arizona/game/GTASAInternal.smali"
+GTASA_INTERNAL_PATH = DECODED_DIR + SMALI_PATH + "/com/arizona/game/GTASA.smali"
 
-# print("[INFO] 🔗 Injecting NeoMLoader into GTASAInternal.smali...")
+print("[INFO] 🔗 Injecting NeoMLoader into GTASA.smali...")
 
-# with open(GTASA_INTERNAL_PATH, "r", encoding="utf-8") as file:
-#     smali_lines = file.readlines()
+with open(GTASA_INTERNAL_PATH, "r", encoding="utf-8") as file:
+    smali_lines = file.readlines()
 
-# check_find_samp = False
-# check_connect = False
+check_find_ag_client = False
+check_connect = False
 
-# for i, line in enumerate(smali_lines):
-#     match1 = re.search(r'const-string(?:/jumbo)? (v\d+), "samp"', line)
-#     if match1:
-#         check_find_samp = True
-#         var_name = match1.group(1)
+for i, line in enumerate(smali_lines):
+    match1 = re.search(r'const-string(?:/jumbo)? (v\d+), "ag-client"', line)
+    if match1:
+        check_find_ag_client = True
+        var_name = match1.group(1)
+        
+        if f"invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V" in smali_lines[i + 2]:
+            smali_lines.insert(i + 4, f'\n    const-string {var_name}, "NeoMLoader"\n\n    invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n')
+            print("[INFO] ✅ NeoMLoader injected successfully!")
+            check_connect = True
+            break
 
-#         if (f"invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V" in smali_lines[i + 2] or f"invoke-static {{{var_name}}}, Lcom/arizona/game/GTASAInternal;->loadNativeLibrary(Ljava/lang/String;)V" in smali_lines[i + 2]):
-#             smali_lines.insert(i + 4, f'\n    const-string {var_name}, "neomloader"\n\n    invoke-static {{{var_name}}}, Ljava/lang/System;->loadLibrary(Ljava/lang/String;)V\n\n')
-#             print("[INFO] ✅ NeoMLoader injected successfully!")
-#             check_connect = True
-#             break
+if not check_find_ag_client:
+    raise RuntimeError("❌ Failed to locate 'ag-client' in GTASA.smali.")
 
-# if not check_find_samp:
-#     raise RuntimeError("❌ Failed to locate 'samp' in GTASAInternal.smali.")
+if not check_connect:
+    raise RuntimeError("❌ Failed to locate 'ag-client' loadLibrary call in GTASA.smali.")
 
-# if not check_connect:
-#     raise RuntimeError("❌ Failed to locate 'samp' loadLibrary call in GTASAInternal.smali.")
-
-# with open(GTASA_INTERNAL_PATH, "w", encoding="utf-8") as file:
-#     file.writelines(smali_lines)
+with open(GTASA_INTERNAL_PATH, "w", encoding="utf-8") as file:
+    file.writelines(smali_lines)
 
 ##################################################################################################################
 
-# SMALI_CLASSES = glob.glob(DECODED_DIR + "/smali_classes*")
+smali_numbers = []
 
-# smali_numbers = []
+for path in SMALI_CLASSES:
+    name = os.path.basename(path)
+    if name.startswith("smali_classes"):
+        num = name.replace("smali_classes", "")
+        if num.isdigit():
+            smali_numbers.append(int(num))
 
-# for path in SMALI_CLASSES:
-#     name = os.path.basename(path)
-#     if name.startswith("smali_classes"):
-#         num = name.replace("smali_classes", "")
-#         if num.isdigit():
-#             smali_numbers.append(int(num))
+if not smali_numbers:
+    raise RuntimeError("❌ No smali_classes folders found!")
 
-# if not smali_numbers:
-#     raise RuntimeError("❌ No smali_classes folders found!")
-
-# LATEST_SMALI = max(smali_numbers)
+LATEST_SMALI = max(smali_numbers)
 
 ##################################################################################################################
 
