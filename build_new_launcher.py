@@ -150,143 +150,143 @@ LATEST_SMALI = max(smali_numbers)
 
 ##################################################################################################################
 
-# PATH_SMALI_TOOLS = DECODED_DIR + f"/smali_classes{LATEST_SMALI + 1}"
+PATH_SMALI_TOOLS = DECODED_DIR + f"/smali_classes{LATEST_SMALI + 1}"
 
-# print("[INFO] 🔧 Compiling MTG Tools from java files to smali...")
+print("[INFO] 🔧 Compiling MTG Tools from java files to smali...")
 
-# def compile_java_to_smali():
-#     classpath = f"libs/android.jar{os.pathsep}libs/unity-ads-4.4.1.jar"
+def compile_java_to_smali():
+    classpath = f"libs/android.jar{os.pathsep}libs/unity-ads-4.4.1.jar"
 
-#     java_dir = "java" 
-#     java_files = glob.glob(os.path.join(java_dir, "*.java"))
+    java_dir = "java" 
+    java_files = glob.glob(os.path.join(java_dir, "*.java"))
 
-#     if not java_files:
-#         raise RuntimeError(f"❗ Java source files not found in {java_dir} folder!")
+    if not java_files:
+        raise RuntimeError(f"❗ Java source files not found in {java_dir} folder!")
 
-#     try:
-#         print("[INFO] ⚙️ Java -> Class...")
-#         subprocess.run([
-#             "javac", 
-#             "--release", "8", 
-#             "-Xlint:-options",
-#             "-nowarn",
-#             "-cp", classpath
-#         ] + java_files, check=True)
+    try:
+        print("[INFO] ⚙️ Java -> Class...")
+        subprocess.run([
+            "javac", 
+            "--release", "8", 
+            "-Xlint:-options",
+            "-nowarn",
+            "-cp", classpath
+        ] + java_files, check=True)
 
-#         print("[INFO] ⚙️ Class -> Dex...")
-#         class_files = [os.path.join(java_dir, f) for f in os.listdir(java_dir) if f.endswith('.class')]
-#         subprocess.run([
-#             "java", "-cp", "libs/d8.jar", "com.android.tools.r8.D8", 
-#             "--release", 
-#             "--output", ".", 
-#             "--lib", "libs/android.jar",
-#             "--lib", "libs/unity-ads-4.4.1.jar"
-#         ] + class_files, check=True)
+        print("[INFO] ⚙️ Class -> Dex...")
+        class_files = [os.path.join(java_dir, f) for f in os.listdir(java_dir) if f.endswith('.class')]
+        subprocess.run([
+            "java", "-cp", "libs/d8.jar", "com.android.tools.r8.D8", 
+            "--release", 
+            "--output", ".", 
+            "--lib", "libs/android.jar",
+            "--lib", "libs/unity-ads-4.4.1.jar"
+        ] + class_files, check=True)
 
-#         print("[INFO] ⚙️ Dex -> Smali...")
-#         subprocess.run([
-#             "java", "-jar", "libs/baksmali.jar", 
-#             "d", "classes.dex", 
-#             "-o", PATH_SMALI_TOOLS
-#         ], check=True)
+        print("[INFO] ⚙️ Dex -> Smali...")
+        subprocess.run([
+            "java", "-jar", "libs/baksmali.jar", 
+            "d", "classes.dex", 
+            "-o", PATH_SMALI_TOOLS
+        ], check=True)
 
-#         print("[INFO] ✅ MTG Tools compiled successfully!")
+        print("[INFO] ✅ MTG Tools compiled successfully!")
 
-#     except subprocess.CalledProcessError as e:
-#         raise RuntimeError(f"❗ Failed compile MTG Tools: {e}")
-#     finally:
-#         if os.path.exists("classes.dex"):
-#             os.remove("classes.dex")
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"❗ Failed compile MTG Tools: {e}")
+    finally:
+        if os.path.exists("classes.dex"):
+            os.remove("classes.dex")
         
-#         for f in os.listdir(java_dir):
-#             if f.endswith('.class'):
-#                 os.remove(os.path.join(java_dir, f))
+        for f in os.listdir(java_dir):
+            if f.endswith('.class'):
+                os.remove(os.path.join(java_dir, f))
                 
-# compile_java_to_smali()
+compile_java_to_smali()
 
 ##################################################################################################################
 
-# PATH_SMALI_ADS = DECODED_DIR + f"/smali_classes{LATEST_SMALI + 2}"
+PATH_SMALI_ADS = DECODED_DIR + f"/smali_classes{LATEST_SMALI + 2}"
 
-# print("[INFO] 🔧 Compiling Unity Ads from jar to smali...")
+print("[INFO] 🔧 Compiling Unity Ads from jar to smali...")
 
-# def compile_unity_ads_to_smali():
-#     unity_jars = [
-#         "libs/unity-ads-4.4.1.jar",
-#         "libs/unity-scaradapter-common.jar",
-#         "libs/unity-scaradapter-1920.jar",
-#         "libs/unity-scaradapter-1950.jar",
-#         "libs/unity-scaradapter-2000.jar",
-#     ]
-#     temp_dex_dir = "temp_unity_dex"
+def compile_unity_ads_to_smali():
+    unity_jars = [
+        "libs/unity-ads-4.4.1.jar",
+        "libs/unity-scaradapter-common.jar",
+        "libs/unity-scaradapter-1920.jar",
+        "libs/unity-scaradapter-1950.jar",
+        "libs/unity-scaradapter-2000.jar",
+    ]
+    temp_dex_dir = "temp_unity_dex"
 
-#     for jar in unity_jars:
-#         if not os.path.exists(jar):
-#             raise RuntimeError(f"❗ Jar not found: {jar}")
+    for jar in unity_jars:
+        if not os.path.exists(jar):
+            raise RuntimeError(f"❗ Jar not found: {jar}")
 
-#     os.makedirs(temp_dex_dir, exist_ok=True)
+    os.makedirs(temp_dex_dir, exist_ok=True)
 
-#     try:
-#         print("[INFO] ⚙️ Unity Ads Jar -> Dex...")
+    try:
+        print("[INFO] ⚙️ Unity Ads Jar -> Dex...")
         
-#         subprocess.run([
-#             "java",
-#             "-cp", "libs/d8.jar",
-#             "com.android.tools.r8.D8",
-#             "--release",
-#             "--output", temp_dex_dir,
-#             "--lib", "libs/android.jar",
-#             *unity_jars
-#         ], check=True)
+        subprocess.run([
+            "java",
+            "-cp", "libs/d8.jar",
+            "com.android.tools.r8.D8",
+            "--release",
+            "--output", temp_dex_dir,
+            "--lib", "libs/android.jar",
+            *unity_jars
+        ], check=True)
 
-#         print("[INFO] ⚙️ Dex -> Smali...")
+        print("[INFO] ⚙️ Dex -> Smali...")
 
-#         dex_file = os.path.join(temp_dex_dir, "classes.dex")
-#         subprocess.run([
-#             "java", "-jar", "libs/baksmali.jar",
-#             "d", dex_file,
-#             "-o", PATH_SMALI_ADS
-#         ], check=True)
+        dex_file = os.path.join(temp_dex_dir, "classes.dex")
+        subprocess.run([
+            "java", "-jar", "libs/baksmali.jar",
+            "d", dex_file,
+            "-o", PATH_SMALI_ADS
+        ], check=True)
 
-#     except subprocess.CalledProcessError as e:
-#         raise RuntimeError(f"❗ Failed compile Unity Ads: {e}")
-#     finally:
-#         if os.path.exists(temp_dex_dir):
-#             shutil.rmtree(temp_dex_dir)
+    except subprocess.CalledProcessError as e:
+        raise RuntimeError(f"❗ Failed compile Unity Ads: {e}")
+    finally:
+        if os.path.exists(temp_dex_dir):
+            shutil.rmtree(temp_dex_dir)
 
-#     print("[INFO] ✅ Unity Ads compiled successfully!")
+    print("[INFO] ✅ Unity Ads compiled successfully!")
 
-# compile_unity_ads_to_smali()
+compile_unity_ads_to_smali()
 
 ##################################################################################################################
 
-# MANIFEST_PATH = DECODED_DIR + "/AndroidManifest.xml"
+MANIFEST_PATH = DECODED_DIR + "/AndroidManifest.xml"
 
-# print("[INFO] 📢 Adding Unity Ads activities to AndroidManifest.xml...")
+print("[INFO] 📢 Adding Unity Ads activities to AndroidManifest.xml...")
 
-# with open(MANIFEST_PATH, "r", encoding="utf-8") as file:
-#     manifest_data = file.read()
+with open(MANIFEST_PATH, "r", encoding="utf-8") as file:
+    manifest_data = file.read()
 
-# new_activities = '''
-# <activity android:name="com.unity3d.services.ads.adunit.AdUnitActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-# <activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
-# <activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
-# <activity android:name="com.unity3d.services.ads.adunit.AdUnitSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
-# '''
+new_activities = '''
+<activity android:name="com.unity3d.services.ads.adunit.AdUnitActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+<activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="true" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+<activity android:name="com.unity3d.services.ads.adunit.AdUnitTransparentSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+<activity android:name="com.unity3d.services.ads.adunit.AdUnitSoftwareActivity" android:configChanges="fontScale|keyboard|keyboardHidden|locale|mnc|mcc|navigation|orientation|screenLayout|screenSize|smallestScreenSize|uiMode|touchscreen" android:hardwareAccelerated="false" android:theme="@android:style/Theme.NoTitleBar.Fullscreen"/>
+'''
 
-# manifest_data = re.sub(
-#     r'(<activity[^>]+PlayCoreDialogWrapperActivity[^>]+/>)',
-#     r'\1' + new_activities,
-#     manifest_data
-# )
+manifest_data = re.sub(
+    r'(<activity[^>]+PlayCoreDialogWrapperActivity[^>]+/>)',
+    r'\1' + new_activities,
+    manifest_data
+)
 
-# if 'com.unity3d.services.ads.adunit' in manifest_data:
-#     print("[INFO] ✅ Unity Ads activities added successfully!")
-# else:
-#     raise RuntimeError("❌ Failed to add Unity Ads activities to AndroidManifest.xml.")
+if 'com.unity3d.services.ads.adunit' in manifest_data:
+    print("[INFO] ✅ Unity Ads activities added successfully!")
+else:
+    raise RuntimeError("❌ Failed to add Unity Ads activities to AndroidManifest.xml.")
 
-# with open(MANIFEST_PATH, "w", encoding="utf-8") as file:
-#     file.write(manifest_data)
+with open(MANIFEST_PATH, "w", encoding="utf-8") as file:
+    file.write(manifest_data)
 
 ##################################################################################################################
 
@@ -304,68 +304,40 @@ if ARZ_SMALI_PATH == "":
 
 ##################################################################################################################
 
-# MAIN_ENTRENCH_PATH = DECODED_DIR + ARZ_SMALI_PATH + "/com/arizona/launcher/MainEntrench.smali"
+MAIN_ENTRENCH_PATH = DECODED_DIR + ARZ_SMALI_PATH + "/com/arizona/launcher/MainEntrench.smali"
 
-# print("[INFO] 🔧 Injecting call MTG Tools...")
+print("[INFO] 🔧 Injecting call MTG Tools...")
 
-# with open(MAIN_ENTRENCH_PATH, "r", encoding="utf-8") as file:
-#     smali_lines = file.readlines()
+with open(MAIN_ENTRENCH_PATH, "r", encoding="utf-8") as file:
+    smali_lines = file.readlines()
 
-# check_toast = False
-# check_version = False
+check_inject = False
 
-# start_idx = None
-# cond3_count = 0
-# end_idx = None
+for i, line in enumerate(smali_lines):
+    match_toast = re.search(r'invoke-virtual {(v\d+)}, Landroid/widget/Toast;->show\(\)V', line)
+    if match_toast:
+        smali_lines[i+2] = f'    invoke-static {{p0, p0}}, Lcom/arizona/launcher/MtgTools;->initialize(Landroid/app/Activity;Landroid/content/Context;)V\n'
+        print("[INFO] ✅ MTGTools injected successfully.")
+        check_inject = True
+        break
 
-# for i, line in enumerate(smali_lines):
-#     if start_idx is None:
-#         if re.search(r'sget-object (v\d+), Landroid/os/Build;->SUPPORTED_ABIS:\[Ljava/lang/String;', line):
-#             start_idx = i
-#     else:
-#         if re.search(r':cond_4', line):
-#             cond3_count += 1
-#             if cond3_count == 2:
-#                 end_idx = i
-#                 break
+if not check_inject:
+    raise RuntimeError("❌ Failed to inject MTGTools.")
 
-# if start_idx is not None and end_idx is not None:
-#     smali_lines[start_idx] = '\n    const-string v0, ""\n\n'
-#     del smali_lines[start_idx+1:end_idx + 1]
-#     print("[INFO] ✅ ABI check removed from Toast.")
-# else:
-#     raise RuntimeError("❌ ABI not found!")
+version_pattern = re.compile(r'const-string v\d+, " v(\d+\.\d+\.\d+)')
+version_app = ""
 
-# for i, line in enumerate(smali_lines):
-#     match_toast = re.search(r'invoke-virtual {(v\d+)}, Landroid/widget/Toast;->show\(\)V', line)
-#     if match_toast:
-#         var_name_3 = match_toast.group(1)
-#         smali_lines[i] = f'    invoke-virtual {{{var_name_3}}}, Landroid/widget/Toast;->show()V\n\n    invoke-static {{p0, p0}}, Lcom/arizona/launcher/MtgTools;->initialize(Landroid/app/Activity;Landroid/content/Context;)V\n'
-#         print("[INFO] ✅ MTGTools injected successfully.")
-#         check_toast = True
-#         break
+for line in smali_lines:
+    match_version = version_pattern.search(line)
+    if match_version:
+        version_app = "v" + match_version.group(1)
+        break
 
-# if not check_toast:
-#     raise RuntimeError("❌ Failed to inject MTGTools.")
+if not version_app:
+    raise RuntimeError("❌ Version not found!")
 
-# version_pattern = re.compile(r'const-string (v\d+), " v(.+) release(?:_web)?"')
-# version_app = ""
-
-# for i, line in enumerate(smali_lines):
-#     match_version = version_pattern.search(line)
-#     if match_version:
-#         var_name_4, version_found = match_version.groups()
-#         version_app = "v" + version_found
-#         smali_lines[i] = f'    const-string {var_name_4}, "[MTG MODS]\\n\u2139\ufe0f v{version_found} \u2139\ufe0f"\n'
-#         print(f"[INFO] ✅ Launch toast updated to v{version_found}.")
-#         check_version = True
-#         break
-
-# if not check_version:
-#     raise RuntimeError("❌ Version not found!")
-
-# with open(MAIN_ENTRENCH_PATH, "w", encoding="utf-8") as file:
-#     file.writelines(smali_lines)
+with open(MAIN_ENTRENCH_PATH, "w", encoding="utf-8") as file:
+    file.writelines(smali_lines)
 
 #################################################################################################################
 
@@ -430,7 +402,7 @@ if os.path.exists(KEYSTORE_PATH) and KEY_ALIAS and KEY_PASS:
             UNSIGNED_APK
         ], check=True)
         print(f"[INFO] ✅ Signed successfully!")
-        print(f"[INFO] ℹ️ Your launcher: {SIGNED_APK}")
+        print(f"[INFO] ℹ️ Your launcher {version_app}: {SIGNED_APK}")
 
         idsig = SIGNED_APK + ".idsig"
         if os.path.exists(idsig):
@@ -441,7 +413,7 @@ if os.path.exists(KEYSTORE_PATH) and KEY_ALIAS and KEY_PASS:
 else:
     print(f"[INFO] ➡️ Signing skipped (no keystore or env vars found)")
     shutil.move(UNSIGNED_APK, SIGNED_APK)
-    print(f"[INFO] ℹ️ Your no_signed launcher: {SIGNED_APK}")
+    print(f"[INFO] ℹ️ Your no_signed launcher {version_app}: {SIGNED_APK}")
     
 ##################################################################################################################
 
