@@ -1,4 +1,4 @@
-name: Auto Build MonetLoader
+name: Auto Build NeoMLoader
 
 on:
   workflow_dispatch:
@@ -84,7 +84,7 @@ jobs:
         run: |
           git config user.name "github-actions"
           git config user.email "actions@github.com"
-          git add launcher.json files/assets/monetloader/compat/profile.json
+          git add launcher.json files/assets/neomloader/compat/profile.json
 
           if git diff --cached --quiet; then
             echo "ℹ️ Json files not changed. Skip commit."
@@ -104,10 +104,10 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ steps.get_version.outputs.version_name }}
-          name: "MonetLoader ${{ steps.get_version.outputs.version_name }}"
+          name: "NeoMLoader ${{ steps.get_version.outputs.version_name }}"
           files: "*.apk"
           body: |
-            **🚀 MonetLoader интегрирован в версию ${{ steps.get_version.outputs.version_name }}!**
+            **🚀 NeoMLoader интегрирован в версию ${{ steps.get_version.outputs.version_name }}!**
           draft: false
           prerelease: false
           make_latest: true
