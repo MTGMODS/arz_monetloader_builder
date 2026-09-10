@@ -260,6 +260,16 @@ compile_unity_ads_to_smali()
 
 ##################################################################################################################
 
+print("[INFO] 🔧 Moving androidx folder to smali_classes...")
+
+src_move = os.path.join(DECODED_DIR, "smali_classes3", "androidx")
+dst_move = os.path.join(DECODED_DIR, f"smali_classes{LATEST_SMALI + 3}", "androidx")
+if os.path.exists(src_move):
+    os.makedirs(os.path.dirname(dst_move), exist_ok=True)
+    shutil.move(src_move, dst_move)
+
+##################################################################################################################
+
 MANIFEST_PATH = DECODED_DIR + "/AndroidManifest.xml"
 
 print("[INFO] 📢 Adding Unity Ads activities to AndroidManifest.xml...")
@@ -316,8 +326,7 @@ check_inject = False
 for i, line in enumerate(smali_lines):
     match_toast = re.search(r'invoke-virtual {(v\d+)}, Landroid/widget/Toast;->show\(\)V', line)
     if match_toast:
-        smali_lines[i+2] = f'    invoke-static {{p0, p0}}, Lcom/arizona/launcher/MtgTools;->initialize(Landroid/app/Activity;Landroid/content/Context;)V\n'
-        print("[INFO] ✅ MTGTools injected successfully.")
+        smali_lines.insert(i + 2, '    invoke-static {p0, p0}, Lcom/arizona/launcher/MtgTools;->initialize(Landroid/app/Activity;Landroid/content/Context;)V\n\n')
         check_inject = True
         break
 
