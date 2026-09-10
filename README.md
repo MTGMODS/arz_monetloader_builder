@@ -130,5 +130,5 @@ python build_launcher.py rodina
 # 📜 License & Copyright
 
 - **The code in this repository** (build scripts, Java wrappers, and custom Lua helpers) is released under the [MIT License](LICENSE). You are free to modify and distribute these specific tools.
-- **NeoMLoader** is an another project created by [bymaga0](https://t.me/neomloader). Please refer to telegram channel for specific licensing terms.
+- **NeoMLoader** is an another project created by [bymaga0](https://t.me/neomloader). Please refer to bymaga0 for specific licensing terms.
 - **Arizona/Rodina Mobile** and all related trademarks, copyrights, and assets are the property of their respective owners. This project claims no ownership over the original game client.
