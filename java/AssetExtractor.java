@@ -100,15 +100,17 @@ public class AssetExtractor {
     }
 
     private static void showErrorDialog(Activity activity, Context context, String title, String message) {
-        AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButton("Ок", (dialogInterface, i) -> activity.finishAffinity())
-                .setCancelable(false);
+        activity.runOnUiThread(() -> {
+            AlertDialog.Builder alertDialog = new AlertDialog.Builder(context)
+                    .setTitle(title)
+                    .setMessage(message)
+                    .setPositiveButton("Ок", (dialogInterface, i) -> activity.finishAffinity())
+                    .setCancelable(false);
 
-        AlertDialog dialog = alertDialog.create();
-        dialog.setCanceledOnTouchOutside(false);
-        dialog.show();
+            AlertDialog dialog = alertDialog.create();
+            dialog.setCanceledOnTouchOutside(false);
+            dialog.show();
+        });
     }
 
 }
