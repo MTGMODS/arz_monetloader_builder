@@ -109,5 +109,5 @@ jobs:
           body: |
             **🚀 NeoMLoader интегрирован в версию ${{ steps.get_version.outputs.version_name }}!**
           draft: false
-          prerelease: false
-          make_latest: true
+          prerelease: true
+          make_latest: false
