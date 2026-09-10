@@ -85,6 +85,13 @@ public class AssetExtractor {
     }
 
     private static void copyFile(AssetManager assetManager, String assetPath, File outFile) throws IOException {
+        if (outFile.exists()) { outFile.delete(); }
+
+        File parent = outFile.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+
         InputStream in = assetManager.open(assetPath);
         FileOutputStream out = new FileOutputStream(outFile);
 
